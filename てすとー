@@ -42,7 +42,7 @@ function display_to_Holidays($date,$Holidays_array) {
 //GoogleカレンダーAPIから祝日を取得
 function getHolidays($year) {
 	
-	$api_key = 'AIzaSyD8LzJjuyzLVUlKV-q54YVv-3f5kT82UDo';
+	$api_key = '**********';
 	$holidays = array();
 	$holidays_id = 'japanese__ja@holiday.calendar.google.com'; // Google 公式版日本語
 	//$holidays_id = 'japanese@holiday.calendar.google.com'; // Google 公式版英語
@@ -196,7 +196,7 @@ while($i<count($display_tb_name_array)){ //上で作ったtbのname属性の配�
 //データベースから勤務情報を取り出す 表示されている日より退職しているものは検索しない
 try{
 	//検索処理
-	$stmt = $pdo->prepare('SELECT * FROM schedule_info JOIN user ON schedule_info.user_id = user.user_id JOIN schedule ON schedule_info.schedule_id = schedule.schedule_id BETWEEN :month_fast_day AND :next_month_fast_day
+	$stmt = $pdo->prepare('SELECT * FROM schedule_info JOIN user ON schedule_info.user_id = user.user_id JOIN schedule ON schedule_info.schedule_id = schedule.schedule_id WHERE start_date BETWEEN :month_fast_day AND :next_month_fast_day
 	ORDER BY start_date asc');
 	$display_date_next = date("Y-m-d",strtotime(' +1 month',strtotime($display_date)));
 	$stmt -> bindParam(':month_fast_day', $display_date, PDO::PARAM_STR);
@@ -210,7 +210,7 @@ try{
 }
 $workers_array = array();//当日の勤務者名を入れる配列初期化
 while($row = $stmt -> fetch(PDO::FETCH_ASSOC)) { /*スタッフの人数の一ヶ月の勤務日分繰り返す */
-	$workers_array[$row[date]] .= "<br/>".$row[name];//一行改行、勤務者名を代入
+	$workers_array[$row[start_date]] .= "<br/>".$row[user_name];//一行改行、勤務者名を代入
 }
 ?>
 
@@ -276,15 +276,15 @@ for($iii = 0; $iii <5; $iii++){
 		if(isset($display_day_array[$ii]) && $display_calendar_flag == 1){//flagが1だったら、下記の処理を実行
 		// if($display_calendar_flag == 1){//flagが1だったら、下記の処理を実行
 			echo $display_day_array[$ii]//日付を表示
-			.display_to_Holidays(date("Y-m-d",strtotime($display_year."-".$display_month."-".$display_day_array[$ii])),$Holidays_array); //祝日があれば一行改行して表示、function.phpの中の関数
-			// .display_to_workers(date("Y-m-d",strtotime($display_year."-".$display_month."-".$display_day_array[$ii])),$workers_array);//当日、勤務予定なら名前を表示する関数 function.phpの関数
+			.display_to_Holidays(date("Y-m-d",strtotime($display_year."-".$display_month."-".$display_day_array[$ii])),$Holidays_array) //祝日があれば一行改行して表示、function.phpの中の関数
+			.display_to_workers(date("Y-m-d",strtotime($display_year."-".$display_month."-".$display_day_array[$ii])),$workers_array);//当日、勤務予定なら名前を表示する関数 function.phpの関数
 			$i++;
 			$ii++;
 		}elseif($display_calendar_flag == 0){//flagが0だったら、下記の処理を実行
 			if($display_tb_name_array[$i] == "name1".date("w",strtotime($display_date))){//tbのタグのname属性が一緒だったら1日目を表示させる為、下記の処理を実行
 				echo $display_day_array[$ii]//日付を表示
-				.display_to_Holidays(date("Y-m-d",strtotime($display_year."-".$display_month."-".$display_day_array[$ii])),$Holidays_array); //祝日があれば一行改行して表示、function.phpの中の関数
-				// .display_to_workers(date("Y-m-d",strtotime($display_year."-".$display_month."-".$display_day_array[$ii])),$workers_array);//当日、勤務予定なら名前を表示する関数 function.phpの関数
+				.display_to_Holidays(date("Y-m-d",strtotime($display_year."-".$display_month."-".$display_day_array[$ii])),$Holidays_array) //祝日があれば一行改行して表示、function.phpの中の関数
+				.display_to_workers(date("Y-m-d",strtotime($display_year."-".$display_month."-".$display_day_array[$ii])),$workers_array);//当日、勤務予定なら名前を表示する関数 function.phpの関数
 				$display_calendar_flag = 1;//flagを1に変える
 				$ii++;
 			}
@@ -318,15 +318,15 @@ if((count($display_day_array) == 30 AND date("w",strtotime($display_date)) >= 6)
 		if(isset($display_day_array[$ii]) && $display_calendar_flag == 1){//flagが1だったら、下記の処理を実行
 		// if($display_calendar_flag == 1){//flagが1だったら、下記の処理を実行
 			echo $display_day_array[$ii]//日付を表示
-			.display_to_Holidays(date("Y-m-d",strtotime($display_year."-".$display_month."-".$display_day_array[$ii])),$Holidays_array); //祝日があれば一行改行して表示、function.phpの中の関数
-			// .display_to_workers(date("Y-m-d",strtotime($display_year."-".$display_month."-".$display_day_array[$ii])),$workers_array);//当日、勤務予定なら名前を表示する関数 function.phpの関数
+			.display_to_Holidays(date("Y-m-d",strtotime($display_year."-".$display_month."-".$display_day_array[$ii])),$Holidays_array) //祝日があれば一行改行して表示、function.phpの中の関数
+			.display_to_workers(date("Y-m-d",strtotime($display_year."-".$display_month."-".$display_day_array[$ii])),$workers_array);//当日、勤務予定なら名前を表示する関数 function.phpの関数
 			$i++;
 			$ii++;
 		}elseif($display_calendar_flag == 0){//flagが0だったら、下記の処理を実行
 			if($display_tb_name_array[$i] == "name1".date("w",strtotime($display_date))){//tbのタグのname属性が一緒だったら1日目を表示させる為、下記の処理を実行
 				echo $display_day_array[$ii]//日付を表示
-				.display_to_Holidays(date("Y-m-d",strtotime($display_year."-".$display_month."-".$display_day_array[$ii])),$Holidays_array); //祝日があれば一行改行して表示、function.phpの中の関数
-				// .display_to_workers(date("Y-m-d",strtotime($display_year."-".$display_month."-".$display_day_array[$ii])),$workers_array);//当日、勤務予定なら名前を表示する関数 function.phpの関数
+				.display_to_Holidays(date("Y-m-d",strtotime($display_year."-".$display_month."-".$display_day_array[$ii])),$Holidays_array) //祝日があれば一行改行して表示、function.phpの中の関数
+				.display_to_workers(date("Y-m-d",strtotime($display_year."-".$display_month."-".$display_day_array[$ii])),$workers_array);//当日、勤務予定なら名前を表示する関数 function.phpの関数
 				$display_calendar_flag = 1;//flagを1に変える
 				$ii++;
 			}
