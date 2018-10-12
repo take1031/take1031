@@ -195,11 +195,11 @@ while($i<count($display_tb_name_array)){ //上で作ったtbのname属性の配�
 //データベースから勤務情報を取り出す 表示されている日より退職しているものは検索しない
 try{
 	//検索処理
-	$stmt = $pdo->prepare('SELECT * FROM schedule AS S 
-	JOIN schedule_info AS SI
-	ON SI.schedule_id = S.schedule_id 
-	WHERE DATE_FORMAT(S.start_date, "%y%m") = DATE_FORMAT("2018-10-01", "%y%m")
-	ORDER BY S.start_date ASC;');
+	$stmt = $pdo->prepare('SELECT * FROM yotei 
+	JOIN yotei_group
+	ON yotei_group.yotei_id = yotei.yotei_id 
+	WHERE DATE_FORMAT(yotei.start_date, "%y%m") = DATE_FORMAT("2018-10-01", "%y%m")
+	ORDER BY yotei.start_date ASC;');
 	$display_date_next = date("Y-m-d",strtotime(' +1 month',strtotime($display_date)));
 	$stmt -> bindParam(':month_fast_day', $display_date, PDO::PARAM_STR);
 	$stmt -> bindParam(':next_month_fast_day', $display_date_next, PDO::PARAM_STR);
@@ -212,7 +212,7 @@ try{
 }
 // $workers_array = array();//当日の勤務者名を入れる配列初期化
 // while($row = $stmt -> fetch(PDO::FETCH_ASSOC)) { /*スタッフの人数の一ヶ月の勤務日分繰り返す */
-// 	$workers_array[$row[start_date]] .= "<br/>".$row[schedule_title];//一行改行、勤務者名を代入
+// 	$workers_array[$row[start_date]] .= "<br/>".$row[yotei_title];//一行改行、勤務者名を代入
 // }
 ?>
 
